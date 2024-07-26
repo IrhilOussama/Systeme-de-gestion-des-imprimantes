@@ -19,7 +19,7 @@ export default function Statistics(){
       }
     }
     )
-  // console.log(myData)
+  console.log(myData)
 
   function getImprimantesNumber(imprimantes){
       let currentImpriantesNumber = 0;
