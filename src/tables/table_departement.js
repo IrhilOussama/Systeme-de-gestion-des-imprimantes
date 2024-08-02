@@ -1,6 +1,7 @@
 import React, { useState, useEffect} from 'react'; 
-import FetchUrl from './fetch.js';
+import FetchUrl from '../fetch.js';
 import {Head, ModificationButtons} from './table_components';
+import fetchData from '../fetch.js';
 
 
 
@@ -8,6 +9,7 @@ import {Head, ModificationButtons} from './table_components';
 
 function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
     const [rows, setRows] = useState([]);
+    const [imprimantes, setImprimantes] = useState([]);
     // form data to send to update_departement.php when update
     const [myFormData, setMyFormData] = useState({
         id: "",
@@ -22,7 +24,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
                 id: editableRow.id,
                 titre: editableRow.titre
             })
-    }, [editableRowId])
+    }, [rows, editableRowId])
     // updating data when submiting form
     async function handleFormSubmit(e){
         e.preventDefault();
@@ -33,10 +35,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
             }
         }
         try {
-            const response = await fetch("http://localhost/gestion-imprimantes-react/functions/update/update_departement.php", {
-                method: 'POST',
-                body: readyFormData,
-            });
+            const response = await fetchData("departement", "update", "POST", readyFormData);
 
             const result = await response.text(); // Use response.json() if your PHP returns JSON
             console.log(result)
@@ -48,12 +47,24 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
     }
     // getting departements
     useEffect(() => {
-        FetchUrl("http://localhost/gestion-imprimantes-react/functions/getters/get_departements.php")
+        FetchUrl("departement", "get_departements")
         .then(res => {
+            console.log(res)
             setRows(res);
         })
+        FetchUrl("imprimante", "get_imprimantes")
+        .then(res => {
+            setImprimantes(res);
+        })
     }, [refreshData])
-    console.log('dks')
+
+    function getImprimantesNumber(imprimantes){
+        let currentImpriantesNumber = 0;
+        imprimantes.forEach(imp => {
+          currentImpriantesNumber += imp.stock;
+        })
+        return currentImpriantesNumber;
+    }
 
     const myNodeList = [];
     rows.forEach(row => {
@@ -81,7 +92,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
                     />
                 </div>
                 <div>
-                    <p className={inputsClasses}> {row['nombre_imprimantes']} </p>
+                    <p className={inputsClasses}> {getImprimantesNumber(imprimantes.filter(imp => imp['departement_id'] === row['id']))} </p>
                 </div>
                 <ModificationButtons 
                     myId={row.id} 

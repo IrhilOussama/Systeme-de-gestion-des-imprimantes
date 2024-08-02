@@ -1,8 +1,21 @@
+import { controllers } from "chart.js"
 
-export default async function fetchData(apiUrl) {
+export default async function fetchData(controller, action, method = "GET", body = {}) {
+  let apiUrl = `${process.env.REACT_APP_PROJECT_PATH}/functions/index.php?controller=${controller}&action=${action}`;
   try {
     // Fetch data from the apiUrl
-    let response = await fetch(apiUrl);
+    let response;
+    if (method === "POST"){
+      response = await fetch(apiUrl, {
+        method: method,
+        body: body
+      });
+    }
+    else {
+      response = await fetch(apiUrl, {
+        method: method
+      });
+    }
     
     // Check if the fetch was successful
     if (!response.ok) {

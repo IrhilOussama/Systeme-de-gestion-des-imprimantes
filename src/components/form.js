@@ -1,6 +1,6 @@
-import { type } from "@testing-library/user-event/dist/type"
+import fetchData from "../fetch";
 
-export default function Form({onAdd, url, myFormData, setMyFormData, showAddBar, myDepartements, myUtilisateurs, myImprimantes, inputs}){
+export default function Form({onAdd, controller, action, myFormData, setMyFormData, showAddBar, myDepartements, myUtilisateurs, myImprimantes, inputs}){
     const inputList = {
         modele: {
             type: "text",
@@ -44,19 +44,14 @@ export default function Form({onAdd, url, myFormData, setMyFormData, showAddBar,
             }
         }
         try {
-            const response = await fetch(url, {
-                method: 'POST',
-                body: readyFormData,
-            });
-
-            const result = await response.text(); // Use response.json() if your PHP returns JSON
-            console.log(result)
+            const response = await fetchData(controller, action, "POST", readyFormData);
+            console.log(response)
         } catch (error) {
             console.error('Error:', error);
         }
         onAdd(); // trigger refresh variable so the rows gets updated
     }
-  // Map input keys to input elements
+    // Map input keys to input elements
     const nodeList = inputs.map(key => {
         if (inputList.hasOwnProperty(key)) {
         const input = inputList[key];
@@ -71,7 +66,7 @@ export default function Form({onAdd, url, myFormData, setMyFormData, showAddBar,
                     title={input.title}
                     pattern={input.pattern}
                     step={input.step}
-                    className="border-l border-white w-full py-5 text-center h-full"
+                    className="border-l border-white w-full py-5 text-center h-full dark:placeholder:text-white"
                 />
             </div>
         );
@@ -80,6 +75,16 @@ export default function Form({onAdd, url, myFormData, setMyFormData, showAddBar,
             return (
             <div>
                 <select onChange={e => setMyFormData({...myFormData, departement: e.target.value})} className='border-l border-white w-full py-5 text-center h-full'>
+                    <option>Departement</option>
+                    {myDepartements}
+                </select>
+            </div>
+            )
+        }
+        else if (key === 'departement_id'){
+            return (
+            <div>
+                <select onChange={e => setMyFormData({...myFormData, departement_id: e.target.value})} className='border-l border-white w-full py-5 text-center h-full'>
                     <option>Departement</option>
                     {myDepartements}
                 </select>
@@ -120,7 +125,7 @@ export default function Form({onAdd, url, myFormData, setMyFormData, showAddBar,
     });
     
     return(
-        <form onSubmit={handleFormSubmit} className={`flex form mt-10 fixed w-10/12 right-0 bottom-0 bg-blue-100 duration-300 mygrid-${nodeList.length + 1} ${showAddBar === false ? "translate-y-full" : ''}`}>
+        <form onSubmit={handleFormSubmit} className={`flex form mt-10 fixed w-10/12 right-0 bottom-0 bg-blue-100 dark:bg-blue-900 dark:text-white  duration-300 mygrid-${nodeList.length + 1} ${showAddBar === false ? "translate-y-full" : ''}`}>
             
             {nodeList}
 

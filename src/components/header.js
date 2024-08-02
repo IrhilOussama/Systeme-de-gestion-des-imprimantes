@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import FetchUrl from "./fetch";
+import fetchData from "../fetch";
 
 function List({filterBtnClicked, hideList, filterOn}){
     const [departements, setDepartements] = useState([]);
     const [checkedDep, setCheckedDep] = useState(false)
     useEffect(() => {
-        FetchUrl("http://localhost/gestion-imprimantes-react/functions/getters/get_departements.php")
+        fetchData("departement", "get_departements")
         .then(res => {
             setDepartements(res)
         })
@@ -29,9 +29,10 @@ function List({filterBtnClicked, hideList, filterOn}){
             filterOn(checkedDep)
         }
     }
+    
     return (
         <div className={"flex flex-col absolute duration-500 right-6 bottom-0 translate-y-full z-10 rounded shadow-sm shadow-slate-400 "  + myClass}>
-            <ul className={ "grid grid-cols-2 p-4 gap-4 bg-slate-200"}>
+            <ul className={ "grid grid-cols-2 p-4 gap-4 bg-slate-200 dark:bg-slate-600"}>
                 {nodeList}
                 <li key={99} className="flex items-center">
                     <button onClick={() => setCheckedDep('')} 
@@ -50,25 +51,53 @@ function List({filterBtnClicked, hideList, filterOn}){
 
 export default function Header({titre, onClick, filterOn}){
     const [filterBtnClicked, setFilterBtnClicked] = useState(false);
+    const [mode, setMode] = useState(localStorage['mode']);
+    async function handleDocumentBtnClick(){
+        await fetch('http://localhost/gestion-imprimantes-react/functions/excel/generate_excel.php');
+        const a = document.createElement("A");
+        a.href = 'http://localhost/gestion-imprimantes-react/functions/excel/imprimantes_data.xlsx';
+        a.download = 'imprimanes_data';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+    
+
+    if (mode !== 'dark'){
+        document.documentElement.classList.remove('dark');
+
+    }
+    else {
+        document.documentElement.classList.add('dark');
+    }
+    
+
     return(
-        <header className="w-full md:w-11/12 lg:w-10/12 absolute top-0 right-0 p-7 bg-slate-50  mb-8 align-middle h-24">
+        <header className="w-full md:w-11/12 lg:w-10/12 absolute top-0 right-0 p-7 bg-slate-50 dark:bg-slate-800 dark:text-white  mb-8 align-middle h-24">
             <div className="flex justify-between">
                 <h1 className="font-medium text-2xl"> {titre + "s"} </h1>
-            <div className="flex " >
-                <button>
-                    <img src="../icons/moon.svg" alt="dark mode" />
+            <div className="flex items-center" >
+                <button className="underline mr-4 font-medium" download onClick={handleDocumentBtnClick}>document</button>
+                <button onClick={ () => {
+                    localStorage['mode'] = localStorage['mode'] === 'dark' ? 'light' : 'dark';
+                    setMode(localStorage['mode'])
+                }
+                    }>
+                    <img className="dark:bg-white rounded-md p-1" src="../icons/moon.svg" alt="dark mode" />
                 </button>
 
                 <div className="flex items-center">
                     <button onClick={() => setFilterBtnClicked(!filterBtnClicked)} className="ml-3">
-                        <img className="w-6" src="../icons/filter.svg" alt="filter" />
+                        <img className="w-8 dark:bg-white rounded-md p-1" src="../icons/filter.svg" alt="filter" />
                     </button>
                     <List filterBtnClicked={filterBtnClicked} filterOn={filterOn} hideList={() => {setFilterBtnClicked(false)}} />
                 </div>
-
+                {titre !== 'statistique' ? (
                 <button onClick={onClick} className="bg-blue-500 text-white p-2 rounded ml-8">
                     Ajouter {titre}
                 </button>
+
+                ): null}
 
             </div>
             </div>

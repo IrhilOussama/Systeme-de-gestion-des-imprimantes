@@ -1,5 +1,5 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin:  http://localhost:3000");
 header("Access-Control-Allow-Methods: POST, GET, OPTIONS"); // Allow POST, GET, and OPTIONS methods
 header("Access-Control-Allow-Headers: Content-Type"); // Allow Content-Type header
 header('Content-Type: application/json');
@@ -18,8 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET'){
                 echo json_encode(['deleted' => false, 'toners' => $check2->fetchAll(PDO::FETCH_ASSOC), 'utilisateurs' => $check1->fetchAll(PDO::FETCH_ASSOC)]);
             }
             else {
-                $sql = "DELETE FROM $table WHERE id = :id";
-                $stmt = $conn->prepare($sql);
+                $stmt = $conn->prepare("DELETE FROM imprimantes WHERE id = :id");
                 $stmt->execute([':id' => $id]);
                 echo json_encode(['deleted' => true]);
             }

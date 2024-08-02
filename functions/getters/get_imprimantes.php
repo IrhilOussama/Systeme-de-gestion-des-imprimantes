@@ -1,5 +1,5 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin:  http://localhost:3000");
 header('Content-Type: application/json');
 require_once("../db/db.php");
 $stmt = $conn->query("SELECT imprimantes.id, modele, marque, ip, departement as departement_id, titre as departement_titre, stock FROM imprimantes, departements WHERE 

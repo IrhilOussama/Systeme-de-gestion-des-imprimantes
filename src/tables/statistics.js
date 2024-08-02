@@ -1,7 +1,7 @@
 import {Chart as ChartJs} from 'chart.js/auto'
 import { useEffect, useState } from 'react';
-import FetchUrl from './fetch';
-import {Line, Doughnut, Bar} from 'react-chartjs-2'
+import FetchUrl from '../fetch';
+import {Doughnut, Bar} from 'react-chartjs-2'
 
 export default function Statistics(){
   const [imprimantesFonctionneNumber, setImprimantesFonctionneNumber] = useState();
@@ -9,7 +9,6 @@ export default function Statistics(){
   const [imprimantesOccupeeNumber, setimprImantesOccupeeNumber] = useState();
   const [imprimantesDisponiblesNumber, setImprimantesDisponiblesNumber] = useState();
   const [imprimantesByDepartement, setImprimantesByDepartements] = useState([]);
-  const [refreshStatistics, setRefreshStatistics] = useState(false);
 
   const departements = Object.keys(imprimantesByDepartement);
   const myData = departements.map(dep => {
@@ -19,8 +18,6 @@ export default function Statistics(){
       }
     }
     )
-  console.log(myData)
-
   function getImprimantesNumber(imprimantes){
       let currentImpriantesNumber = 0;
       imprimantes.forEach(imp => {
@@ -34,17 +31,17 @@ export default function Statistics(){
 
   useEffect(() => {
     const fetchData = async () => {
-      const imprimantes = await FetchUrl('http://localhost/gestion-imprimantes-react/functions/getters/get_imprimantes.php');
+      const imprimantes = await FetchUrl("imprimante", "get_imprimantes");
 
-      const toners = await FetchUrl('http://localhost/gestion-imprimantes-react/functions/getters/get_toners.php');
+      const toners = await FetchUrl("toner", "get_toners");
       setImprimantesFonctionneNumber(toners.length);
       setImprimantesEnPanneNumber(getImprimantesNumber(imprimantes) - toners.length);
       
-      const utilisateurs = await FetchUrl('http://localhost/gestion-imprimantes-react/functions/getters/get_utilisateurs.php');
+      const utilisateurs = await FetchUrl("utilisateur", "get_utilisateurs");
       setimprImantesOccupeeNumber(utilisateurs.length);
       setImprimantesDisponiblesNumber(getImprimantesNumber(imprimantes) - utilisateurs.length);
       
-      const imprimantesByDep = await FetchUrl('http://localhost/gestion-imprimantes-react/functions/getters/get_imprimantes.php?groupe');
+      const imprimantesByDep = await FetchUrl('imprimante', "get_imprimantes_groupe");
       setImprimantesByDepartements(imprimantesByDep);
 
     }

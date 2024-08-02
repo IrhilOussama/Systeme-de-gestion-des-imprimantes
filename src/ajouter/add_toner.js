@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import FetchUrl from "./fetch";
-import Form from "./form";
+import FetchUrl from "../fetch";
+import Form from "../components/form";
 
 export default function AddToner({onAdd, showAddBar, refreshData}){
     // myData
@@ -10,7 +10,7 @@ export default function AddToner({onAdd, showAddBar, refreshData}){
     
     useEffect(() => {
         // Fetch data when component mounts
-        FetchUrl("http://localhost/gestion-imprimantes-react/functions/getters/get_imprimantes.php?fonctionne=false")
+        FetchUrl("imprimante", 'get_imprimantes_none_working')
         .then(users => {
             setMyImprimantes(users); // Update state with fetched rows
         })
@@ -30,8 +30,9 @@ export default function AddToner({onAdd, showAddBar, refreshData}){
             setMyFormData={setMyFormData}
             showAddBar={showAddBar}
             myImprimantes={nodelist}
-            inputs={['modele', 'marque', 'couleur', 'compatibilite']}
-            url="http://localhost/gestion-imprimantes-react/functions/create/create_toner.php"
+            inputs={['modele', 'marque', 'couleur', 'compatibilite']}            
+            controller={'toner'}
+            action={'create'}
         />
         
     )

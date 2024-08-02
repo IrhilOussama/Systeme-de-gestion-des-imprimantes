@@ -1,6 +1,7 @@
 import React, { useState, useEffect} from 'react'; 
-import FetchUrl from './fetch.js';
+import FetchUrl from '../fetch.js';
 import {Head, ModificationButtons} from './table_components.js';
+import fetchData from '../fetch.js';
 
 function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
     const [rows, setRows] = useState([]);
@@ -24,7 +25,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
                 couleur: editableRow.couleur,
                 compatibilite: editableRow.compatibilite
             })
-    }, [editableRowId])
+    }, [rows, editableRowId])
     
     async function handleFormSubmit(e){
         e.preventDefault();
@@ -35,10 +36,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
             }
         }
         try {
-            const response = await fetch("http://localhost/gestion-imprimantes-react/functions/update/update_toner.php", {
-                method: 'POST',
-                body: readyFormData,
-            });
+            const response = await fetchData("toner", "update", "POST", readyFormData);
 
             const result = await response.text(); // Use response.json() if your PHP returns JSON
             console.log(result)
@@ -51,11 +49,11 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
 
     
     useEffect(() => {
-        FetchUrl("http://localhost/gestion-imprimantes-react/functions/getters/get_toners.php")
+        FetchUrl("toner", "get_toners")
         .then(res => {
             setRows(res);
         })
-        FetchUrl("http://localhost/gestion-imprimantes-react/functions/getters/get_imprimantes.php?fonctionne=false")
+        FetchUrl("imprimante", "get_imprimantes_none_working")
         .then(res => {
             setImprimantes(res);
         })

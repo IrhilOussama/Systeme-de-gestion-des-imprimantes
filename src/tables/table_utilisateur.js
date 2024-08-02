@@ -1,6 +1,7 @@
 import React, { useState, useEffect} from 'react'; 
-import FetchUrl from './fetch.js';
+import FetchUrl from '../fetch.js';
 import {Head, ModificationButtons} from './table_components';
+import fetchData from '../fetch.js';
 
 
 
@@ -9,11 +10,13 @@ import {Head, ModificationButtons} from './table_components';
 function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
     const [rows, setRows] = useState([]);
     const [imprimantes, setImprimantes] = useState([]);
+    const [departements, setDepartements] = useState([]);
     // form data to send to update_departement.php when update
     const [myFormData, setMyFormData] = useState({
         id: "",
         nom: "",
-        id_imprimante: ""
+        id_imprimante: "",
+        id_departement: ""
     })
     const [editableRowId, setEditableRowId] = useState(-1);
     // the form data will get the data of the (to edit) row
@@ -23,9 +26,10 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
             setMyFormData({
                 id: editableRow.id,
                 nom: editableRow.nom,
-                id_imprimante: editableRow.id_imprimante
+                id_imprimante: editableRow.id_imprimante,
+                id_departement: editableRow.id_departement
             })
-    }, [editableRowId])
+    }, [rows, editableRowId])
     // updating data when submiting form
     async function handleFormSubmit(e){
         e.preventDefault();
@@ -36,31 +40,32 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
             }
         }
         try {
-            const response = await fetch("http://localhost/gestion-imprimantes-react/functions/update/update_utilisateur.php", {
-                method: 'POST',
-                body: readyFormData,
-            });
+            const response = await fetchData("utilisateur", "update", "POST", readyFormData);
 
-            const result = await response.text(); // Use response.json() if your PHP returns JSON
-            console.log(result)
+            console.log(response)
         } catch (error) {
             console.error('Error:', error);
         }
         triggerRefresh();
         setEditableRowId(-1);
     }
+    
     // getting utilisateurs et imprimantes
     useEffect(() => {
-        FetchUrl("http://localhost/gestion-imprimantes-react/functions/getters/get_utilisateurs.php")
+        FetchUrl('utilisateur', 'get_utilisateurs')
         .then(res => {
             setRows(res);
-            console.log(res)
         })
         .catch(error => console.log("error fetching data " + error ))
-        FetchUrl("http://localhost/gestion-imprimantes-react/functions/getters/get_imprimantes.php?libre=true")
+        FetchUrl("imprimante", "get_imprimantes_available")
         .then(res => {
             setImprimantes(res);
-            console.log(res)
+        })
+        .catch(error => console.log("error fetching data " + error ))
+
+        FetchUrl("departement", "get_departements")
+        .then(res => {
+            setDepartements(res);
         })
         .catch(error => console.log("error fetching data " + error ))
     }, [refreshData])
@@ -74,7 +79,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
         +(isEditable ? "bg-green-200 focus:border-blue-500 border-b border-transparent" : "") ;
         myNodeList.push(
             <form onSubmit={handleFormSubmit} 
-            className={"grid mygrid-3 text-center "
+            className={"grid mygrid-4 text-center "
             + ( (isEditable) ? "bg-amber-50 shadow-sm shadow-slate-300" 
             : " hover:bg-myColor1 hover:shadow-sm hover:shadow-slate-300"
             + (editableExist && !isEditable ? " pointer-events-none" : ""))}>
@@ -89,6 +94,21 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
                         className={inputsClasses} 
                         value={isEditable ? myFormData.nom : row.nom}
                     />
+                </div>
+                <div>
+                    <select 
+                        disabled={!isEditable}  
+                        onChange={(e) => {
+                            setMyFormData({...myFormData, id_departement: e.target.value});
+                        }} 
+                        className={inputsClasses + " cursor-pointer"}>
+                            <option value={row['id_departement']}>{row['departement_titre']}</option>
+                            {departements.map(dep => {
+                                if (dep.id !== row['id_departement'])
+                                    return <option value={dep.id}> {dep.titre} </option>
+                                return null
+                            })}
+                    </select>
                 </div>
                 <div>
                     <select 
@@ -128,17 +148,17 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
 
 
 export default function TableUtilisateur({refreshData, triggerRefresh, onClickAddUserBtn}){
-    const departement_columns = ["nom et prenom", "imprimante associee", "action"];
+    const departement_columns = ["nom et prenom", "departement", "imprimante associee", "action"];
 
     return(
         <div className="absolute w-10/12 right-0 mt-24 p-6">
             <Head key={0} columns={departement_columns}/>
             <Rows 
             onClickAddUserBtn={onClickAddUserBtn}
-             key={1} 
-             imprimante_columns={departement_columns} 
-             refreshData={refreshData} 
-             triggerRefresh={triggerRefresh} />
+            key={1} 
+            imprimante_columns={departement_columns} 
+            refreshData={refreshData} 
+            triggerRefresh={triggerRefresh} />
         </div>
     )
 }

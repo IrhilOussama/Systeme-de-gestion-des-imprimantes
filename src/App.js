@@ -1,18 +1,25 @@
-import './App.css';
+import './style/App.css';
 import React, {useState} from 'react';
-import Aside from './aside.js';
-import Header from './header.js';
-import TableImprimante from './table_imprimante.js';
-import TableToner from './table_toner.js';
-import TableDepartement from './table_departement.js';
-import TableUtilisateur from './table_utilisateur.js';
-import Statistics from './statistics.js';
-import Add from './add.js'
+import Aside from './components/aside.js';
+import Header from './components/header.js';
+import TableImprimante from './tables/table_imprimante.js';
+import TableToner from './tables/table_toner.js';
+import TableDepartement from './tables/table_departement.js';
+import TableUtilisateur from './tables/table_utilisateur.js';
+import Statistics from './tables/statistics.js';
+import Add from './ajouter/add.js'
 
 
 function App() {
   const [myTitle, setMyTitle] = useState('imprimante');
   const [refreshData, setRefreshData] = useState(false);
+  // const [mode, setMode] = useState(localStorage.getItem('mode'));
+  // function triggerMode(){
+  //   // setMode(mode === 'white' ? 'dark' : 'white');
+  //   localStorage['mode'] = localStorage['mode'] === 'dark' ? 'white' : 'dark';
+  //   document.documentElement.classList.add(localStorage.getItem("mode"));
+  // }
+  
   const triggerRefresh = () => {setRefreshData(!refreshData)}
   const [showAddBar, setshowAddBar] = useState([true]);
   const triggerShowAddBar = () => {setshowAddBar(!showAddBar)}

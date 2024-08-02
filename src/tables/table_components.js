@@ -1,5 +1,6 @@
 import { useState } from "react";
-import FetchUrl from './fetch';
+import FetchUrl from '../fetch';
+import fetchData from "../fetch";
 
 export function Head({columns}){
     let nodeList = [];
@@ -13,7 +14,7 @@ export function Head({columns}){
     let myClass = "mygrid-" + nodeList.length;
     return(
         <>
-            <div className={`text-center ${myClass} mb-3 bg-myColor1`}>
+            <div className={`text-center ${myClass} mb-3 bg-myColor1 dark:bg-blue-800 dark:text-white`}>
                 {nodeList}
             </div>
         </>
@@ -22,6 +23,8 @@ export function Head({columns}){
 
 export function ModificationButtons({myId, title, triggerRefresh, editableRowId, onClickModificationBtn, onClickSaveBtn, }){
     const [toggle, setToggle] = useState(true);
+    const myFormData = new FormData();
+    myFormData.append('id', myId);
     return (
         <div className="flex items-center justify-evenly text-base text-center">
             {toggle === false && myId === editableRowId
@@ -32,19 +35,10 @@ export function ModificationButtons({myId, title, triggerRefresh, editableRowId,
                 <button onClick={(e) => {setToggle(false); ;e.preventDefault(); onClickModificationBtn(myId)}} className='no-underline text-amber-500'><img src='../icons/edit.svg' alt='edit' /></button>
             )}
             
-            <button onClick={ async () =>{
-                const res = await FetchUrl(`http://localhost/gestion-imprimantes-react/functions/supprimer.php?id=${myId}&table=${title}s`);
-                if (res.deleted === false){
-                    if (title === 'imprimante'){
-                        if (res.toners.length === 1){
-                            await FetchUrl(`http://localhost/gestion-imprimantes-react/functions/supprimer.php?id=${res.toners[0].id}&table=toners`);
-                        }
-                        if (res.utilisateurs.length === 1){
-                            await FetchUrl(`http://localhost/gestion-imprimantes-react/functions/supprimer.php?id=${res.utilisateurs[0].id}&table=utilisateurs`);
-                        }
-                        await FetchUrl(`http://localhost/gestion-imprimantes-react/functions/supprimer.php?id=${myId}&table=${title}s`);
-                    }
-                }
+            <button onClick={ async (e) =>{
+                e.preventDefault();
+                const res = await fetchData(title, 'delete', 'POST', myFormData);
+                console.log(res)
                 triggerRefresh()
             }}
             className='no-underline'><img src='../icons/delete.svg' alt='delete' /></button>

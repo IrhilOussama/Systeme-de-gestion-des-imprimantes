@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useState } from "react";
-import FetchUrl from "./fetch";
-import Form from "./form";
+import FetchUrl from "../fetch";
+import Form from "../components/form";
 
 export default function AddImprimante({onAdd, showAddBar}){
     // myData
@@ -11,7 +11,7 @@ export default function AddImprimante({onAdd, showAddBar}){
     const [departements, setRows] = useState([]);
     useEffect(() => {
         // Fetch data when component mounts
-        FetchUrl("http://localhost/gestion-imprimantes-react/functions/getters/get_departements.php")
+        FetchUrl("departement", "get_departements")
         .then(rows => {
             setRows(rows); // Update state with fetched rows
         })
@@ -31,7 +31,8 @@ export default function AddImprimante({onAdd, showAddBar}){
             showAddBar={showAddBar}
             myDepartements={myDepartements}
             inputs={['modele', 'marque', 'ip', 'quantite', 'departement']}
-            url="http://localhost/gestion-imprimantes-react/functions/create/create_imprimante.php"
+            controller={'imprimante'}
+            action={'create'}
         />
         
     )

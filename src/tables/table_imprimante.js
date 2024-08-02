@@ -1,14 +1,12 @@
 import React, { useState, useEffect} from 'react'; 
-import FetchUrl from './fetch.js';
+import FetchUrl from '../fetch.js';
 import {Head, ModificationButtons} from './table_components';
-
-
-
-
+import fetchData from '../fetch.js';
 
 function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
     const [backUpRows, setBackUpRows] = useState([]);
     const [rows, setRows] = useState([]);
+    
     useEffect(() => {
         if (filter){
             setRows(backUpRows.filter(row => row['departement_titre'] === filter));
@@ -16,7 +14,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
         else {
             setRows(backUpRows)
         }
-    }, [filter])
+    }, [backUpRows, filter])
     
     const [departements, setDepartements] = useState([]);
     const [myFormData, setMyFormData] = useState({
@@ -42,7 +40,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
                 departement: editableRow['departement_id'],
                 utilisateur: editableRow['utilisateur_id']
             })
-    }, [editableRowId])
+    }, [rows, editableRowId])
     
     async function handleFormSubmit(e){
         e.preventDefault();
@@ -53,13 +51,8 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
             }
         }
         try {
-            const response = await fetch("http://localhost/gestion-imprimantes-react/functions/update/update_imprimante.php", {
-                method: 'POST',
-                body: readyFormData,
-            });
-
-            const result = await response.text(); // Use response.json() if your PHP returns JSON
-            console.log(result)
+            const response = await fetchData("imprimante", "update", "POST", readyFormData);
+            console.log(response)
         } catch (error) {
             console.error('Error:', error);
         }
@@ -69,7 +62,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
 
     
     useEffect(() => {
-        FetchUrl("http://localhost/gestion-imprimantes-react/functions/getters/get_imprimantes.php")
+        FetchUrl("imprimante", 'get_imprimantes')
         .then(res => {
             setRows(res);
             setBackUpRows(res);
@@ -77,11 +70,12 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
         .catch(error => {
             console.log("error fetching get_imprimantes.php: " + error);
         })
-        FetchUrl("http://localhost/gestion-imprimantes-react/functions/getters/get_departements.php")
+        FetchUrl("departement", 'get_departements')
         .then(res => {
             setDepartements(res);
         })
     }, [refreshData])
+    
 
     const myNodeList = [];
     rows.forEach(row => {
@@ -92,11 +86,11 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
         +(isEditable ? "bg-green-200 focus:border-blue-500 border-b border-transparent" : "") ;
         myNodeList.push(
             <form onSubmit={handleFormSubmit} 
-            className={"grid mygrid-8 text-center "
-            + ( (isEditable) ? "bg-amber-50 shadow-sm shadow-slate-300" 
-            : " hover:bg-myColor1 hover:shadow-sm hover:shadow-slate-300"
+            className={"grid mygrid-8 text-center"
+            + ( (isEditable) ? "bg-amber-50 shadow-sm shadow-slate-300 dark:bg-amber-950 dark:shadow-amber-500" 
+            : " hover:bg-myColor1 hover:shadow-sm hover:shadow-slate-300 dark:hover:bg-blue-900 dark:hover:shadow-slate-400 "
             + (editableExist && !isEditable ? " pointer-events-none" : ""))}>
-                <div className='flex items-center'>
+                <div className={'flex items-center'}>
                     <img className='w-8 h-10 mr-2' alt='imprimante.png'  src='../imgs/imprimante-1.png' />
                     <input 
                         readOnly={!isEditable}  
@@ -139,11 +133,11 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
                         onChange={(e) => {
                             setMyFormData({...myFormData, departement: e.target.value});
                         }} 
-                        className={inputsClasses + " cursor-pointer"}>
-                            <option value={row['departement_id']}>{row['departement_titre']}</option>
+                        className={inputsClasses + " cursor-pointer "}>
+                            <option className='dark:bg-slate-800' value={row['departement_id']}>{row['departement_titre']}</option>
                             {departements.map(dep => {
                                 if (dep.id !== row['departement_id'])
-                                    return <option value={dep.id}> {dep.titre} </option>
+                                    return <option className='dark:bg-slate-800' value={dep.id}> {dep.titre} </option>
                                 return null
                             })}
                     </select>
@@ -169,11 +163,11 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
                 </div>
                 <div>
                     {row['status'] === 0 ? (
-                        <button onClick={e => {e.preventDefault(); onClickAddUserBtn()}} className={inputsClasses + " border-none text-sm font-medium text-blue-900 underline"} /*value={row['utilisateur_id']}*/ >Ajouter Utilisateur</button>
+                        <button onClick={e => {e.preventDefault(); onClickAddUserBtn()}} className={inputsClasses + " border-none text-sm font-medium dark:text-white text-blue-900 underline"} /*value={row['utilisateur_id']}*/ >Ajouter Utilisateur</button>
 
                     ) : (
                         <button onClick={e => {e.preventDefault()}} className={inputsClasses + " border-none"} /*value={row['utilisateur_id']}*/ >
-                            {row['utilisateurs'][1]}
+                            {row['utilisateurs'] ? row['utilisateurs'][0]['nom'] : null}
                         </button>
 
                     )}
@@ -192,9 +186,9 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
         )
     })
     return(
-        <>
+        <div className='dark:text-white'>
         {myNodeList}
-        </>
+        </div>
     )
 }
 
@@ -202,23 +196,6 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
 
 export default function TableImprimante({refreshData, triggerRefresh, onClickAddUserBtn, filter}){
     const imprimante_columns = ["modele", "marque", "adresse_ip", "departement", "stock", "status", "utilisateur", "action"];
-    // const toner = [
-    //     {id: 0, titre:"modele"},
-    //     {id: 1, titre:"marque"},
-    //     {id: 2, titre:"couleur"},
-    //     {id: 3, titre:"compatibilite"},
-    //     {id: 4, titre:"action"}
-    // ]
-    // const departement = [
-    //     {id: 0, titre:"titre"},
-    //     {id: 1, titre:"nombre_imprimantes"},
-    //     {id: 2, titre:"action"}
-    // ]
-    // const utilisateur = [
-    //     {id: 0, titre:"nom"},
-    //     {id: 1, titre:"imprimante_associee"},
-    //     {id: 2, titre:"action"}
-    // ]
 
     return(
         <div className="absolute lg:w-10/12 md:w-11/12 sm:w-full right-0 mt-24 p-6">
