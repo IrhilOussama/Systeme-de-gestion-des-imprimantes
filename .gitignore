@@ -2,8 +2,12 @@
 
 # dependencies
 /node_modules
+/vender
 /.pnp
 .pnp.js
+
+#this is a test file by osama
+test
 
 # testing
 /coverage
