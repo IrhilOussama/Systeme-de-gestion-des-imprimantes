@@ -19,8 +19,8 @@ export default function AddToner({onAdd, showAddBar, refreshData}){
         });
     }, [refreshData]); // Empty dependency array ensures useEffect runs only once on mount
     
-    const nodelist = myImprimantes.map(u => (
-        <option value={u['id']}> {u["modele"]} </option>
+    const nodelist = myImprimantes.map((u, i) => (
+        <option key={i+1} value={u['id']}> {u["modele"]} </option>
     ))
 
     return (

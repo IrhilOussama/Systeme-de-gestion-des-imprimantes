@@ -28,11 +28,11 @@ export default function AddUtilisateur({onAdd, showAddBar, refreshData}){
         });
     }, [refreshData]); // Empty dependency array ensures useEffect runs only once on mount
     
-    const impNodeList = myImprimantes.map(u => (
-        <option value={u['id']}> {u["modele"]} </option>
+    const impNodeList = myImprimantes.map((u,i) => (
+        <option key={i+1} value={u['id']}> {u["modele"]} </option>
     ))
-    const depNodeList = myDeps.map(u => (
-        <option value={u['id']}> {u["titre"]} </option>
+    const depNodeList = myDeps.map((u, i) => (
+        <option key={i+1} value={u['id']}> {u["titre"]} </option>
     ))
 
     return (

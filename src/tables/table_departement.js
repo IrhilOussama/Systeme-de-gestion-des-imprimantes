@@ -37,8 +37,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
         try {
             const response = await fetchData("departement", "update", "POST", readyFormData);
 
-            const result = await response.text(); // Use response.json() if your PHP returns JSON
-            console.log(result)
+            await response.text(); // Use response.json() if your PHP returns JSON
         } catch (error) {
             console.error('Error:', error);
         }
@@ -49,7 +48,6 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
     useEffect(() => {
         FetchUrl("departement", "get_departements")
         .then(res => {
-            console.log(res)
             setRows(res);
         })
         FetchUrl("imprimante", "get_imprimantes")
@@ -67,14 +65,14 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
     }
 
     const myNodeList = [];
-    rows.forEach(row => {
+    rows.forEach((row, i) => {
         let isEditable = row.id === editableRowId;
         let editableExist = editableRowId !== -1;
         const inputsClasses = 
         "w-full bg-transparent flex justify-center items-center focus:outline-none font-medium text-xs md:text-sm lg:text-base h-full outline-none text-center py-3 duration-200 " 
         +(isEditable ? "bg-green-200 focus:border-blue-500 border-b border-transparent" : "") ;
         myNodeList.push(
-            <form onSubmit={handleFormSubmit} 
+            <form key={i} onSubmit={handleFormSubmit} 
             className={"grid mygrid-3 text-center "
             + ( (isEditable) ? "bg-amber-50 shadow-sm shadow-slate-300" 
             : " hover:bg-myColor1 hover:shadow-sm hover:shadow-slate-300"
@@ -85,6 +83,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
                         onChange={(e) => {
                             setMyFormData({...myFormData, titre: e.target.value});
                         }}
+                        name='titre'
                         type='text' 
                         placeholder="Titre" 
                         className={inputsClasses} 
@@ -96,6 +95,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
                 </div>
                 <ModificationButtons 
                     myId={row.id} 
+                    name='departement'
                     title={'departement'} 
                     triggerRefresh={triggerRefresh} 
                     onClickModificationBtn={setEditableRowId}

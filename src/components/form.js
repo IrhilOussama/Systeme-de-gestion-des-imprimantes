@@ -12,7 +12,7 @@ export default function Form({onAdd, controller, action, myFormData, setMyFormDa
         },
         ip: {
             type: "text",
-            placeholder: "adresse ip",
+            placeholder: "adresse Ip",
             pattern: "^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
             title: "Enter a valid IP address (e.g., 192.168.1.1)" 
         },
@@ -52,30 +52,31 @@ export default function Form({onAdd, controller, action, myFormData, setMyFormDa
         onAdd(); // trigger refresh variable so the rows gets updated
     }
     // Map input keys to input elements
-    const nodeList = inputs.map(key => {
+    const nodeList = inputs.map((key, index) => {
         if (inputList.hasOwnProperty(key)) {
-        const input = inputList[key];
-        return (
-            <div>
-                <input
-                    key={key} // Unique key for each input
-                    type={input.type}
-                    value={myFormData[key] || ''} // Controlled input
-                    onChange={e => setMyFormData({ ...myFormData, [key]: e.target.value })}
-                    placeholder={input.placeholder}
-                    title={input.title}
-                    pattern={input.pattern}
-                    step={input.step}
-                    className="border-l border-white w-full py-5 text-center h-full dark:placeholder:text-white"
-                />
-            </div>
-        );
+            const input = inputList[key];
+            return (
+                <div key={index}>
+                    <input
+                        key={key} // Unique key for each input
+                        type={input.type}
+                        value={myFormData[key] || ''} // Controlled input
+                        onChange={e => setMyFormData({ ...myFormData, [key]: e.target.value })}
+                        placeholder={input.placeholder}
+                        name={input.placeholder.toLowerCase()}
+                        title={input.title}
+                        pattern={input.pattern}
+                        step={input.step}
+                        className="border-l border-white w-full py-5 text-center h-full dark:placeholder:text-white"
+                    />
+                </div>
+            );
         }
         else if (key === 'departement'){
             return (
-            <div>
-                <select onChange={e => setMyFormData({...myFormData, departement: e.target.value})} className='border-l border-white w-full py-5 text-center h-full'>
-                    <option>Departement</option>
+            <div key={index}>
+                <select name='departement' onChange={e => setMyFormData({...myFormData, departement: e.target.value})} className='border-l border-white w-full py-5 text-center h-full'>
+                    <option key={0}>Departement</option>
                     {myDepartements}
                 </select>
             </div>
@@ -83,8 +84,8 @@ export default function Form({onAdd, controller, action, myFormData, setMyFormDa
         }
         else if (key === 'departement_id'){
             return (
-            <div>
-                <select onChange={e => setMyFormData({...myFormData, departement_id: e.target.value})} className='border-l border-white w-full py-5 text-center h-full'>
+            <div  key={index}>
+                <select name='departement' onChange={e => setMyFormData({...myFormData, departement_id: e.target.value})} className='border-l border-white w-full py-5 text-center h-full'>
                     <option>Departement</option>
                     {myDepartements}
                 </select>
@@ -93,8 +94,8 @@ export default function Form({onAdd, controller, action, myFormData, setMyFormDa
         }
         else if (key === 'utilisateur'){
             return (
-            <div className='grow'>
-                <select onChange={e => setMyFormData({...myFormData, user: e.target.value})} className='border-l border-white w-full py-5 text-center h-full'>
+            <div  key={index} className='grow'>
+                <select name='utilisateur' onChange={e => setMyFormData({...myFormData, user: e.target.value})} className='border-l border-white w-full py-5 text-center h-full'>
                     <option>utilisateur</option>
                     {myUtilisateurs}
                 </select>
@@ -103,8 +104,8 @@ export default function Form({onAdd, controller, action, myFormData, setMyFormDa
         }
         else if (key === 'imprimante_id'){
             return (
-            <div className='grow'>
-                <select onChange={e => setMyFormData({...myFormData, imprimante_id: e.target.value})} className='border-l border-white w-full py-5 text-center h-full'>
+            <div key={index} className='grow'>
+                <select name='imprimante' onChange={e => setMyFormData({...myFormData, imprimante_id: e.target.value})} className='border-l border-white w-full py-5 text-center h-full'>
                     <option>Imprimante</option>
                     {myImprimantes}
                 </select>
@@ -113,8 +114,8 @@ export default function Form({onAdd, controller, action, myFormData, setMyFormDa
         }
         else if (key === 'compatibilite'){
             return (
-            <div className='grow'>
-                <select onChange={e => setMyFormData({...myFormData, compatibilite: e.target.value})} className='border-l border-white w-full py-5 text-center h-full'>
+            <div key={index} className='grow'>
+                <select name='compatibilite' onChange={e => setMyFormData({...myFormData, compatibilite: e.target.value})} className='border-l border-white w-full py-5 text-center h-full'>
                     <option>Imprimante</option>
                     {myImprimantes}
                 </select>

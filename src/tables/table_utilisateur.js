@@ -71,14 +71,14 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
     }, [refreshData])
 
     const myNodeList = [];
-    rows.forEach(row => {
+    rows.forEach((row, i) => {
         let isEditable = row.id === editableRowId;
         let editableExist = editableRowId !== -1;
         const inputsClasses = 
         "w-full bg-transparent flex justify-center items-center focus:outline-none font-medium text-xs md:text-sm lg:text-base h-full outline-none text-center py-3 duration-200 " 
         +(isEditable ? "bg-green-200 focus:border-blue-500 border-b border-transparent" : "") ;
         myNodeList.push(
-            <form onSubmit={handleFormSubmit} 
+            <form key={i} onSubmit={handleFormSubmit} 
             className={"grid mygrid-4 text-center "
             + ( (isEditable) ? "bg-amber-50 shadow-sm shadow-slate-300" 
             : " hover:bg-myColor1 hover:shadow-sm hover:shadow-slate-300"
@@ -90,6 +90,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
                             setMyFormData({...myFormData, nom: e.target.value});
                         }}
                         type='text' 
+                        name='nom'
                         placeholder="Nom et Prenom" 
                         className={inputsClasses} 
                         value={isEditable ? myFormData.nom : row.nom}
@@ -97,30 +98,32 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
                 </div>
                 <div>
                     <select 
+                        name='departement'
                         disabled={!isEditable}  
                         onChange={(e) => {
                             setMyFormData({...myFormData, id_departement: e.target.value});
                         }} 
                         className={inputsClasses + " cursor-pointer"}>
-                            <option value={row['id_departement']}>{row['departement_titre']}</option>
-                            {departements.map(dep => {
+                            <option key={0} value={row['id_departement']}>{row['departement_titre']}</option>
+                            {departements.map((dep, i) => {
                                 if (dep.id !== row['id_departement'])
-                                    return <option value={dep.id}> {dep.titre} </option>
+                                    return <option key={i} value={dep.id}> {dep.titre} </option>
                                 return null
                             })}
                     </select>
                 </div>
                 <div>
                     <select 
+                        name='imprimante'
                         disabled={!isEditable}  
                         onChange={(e) => {
                             setMyFormData({...myFormData, id_imprimante: e.target.value});
                         }} 
                         className={inputsClasses + " cursor-pointer"}>
-                            <option value={row['id_imprimante']}>{row['imprimante_associee']}</option>
-                            {imprimantes.map(imp => {
+                            <option key={0} value={row['id_imprimante']}>{row['imprimante_associee']}</option>
+                            {imprimantes.map((imp, i) => {
                                 if (imp.id !== row['id_imprimante'])
-                                    return <option value={imp.id}> {imp.modele} </option>
+                                    return <option key={i} value={imp.id}> {imp.modele} </option>
                                 return null
                             })}
                     </select>

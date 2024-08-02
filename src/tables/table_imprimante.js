@@ -78,19 +78,19 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
     
 
     const myNodeList = [];
-    rows.forEach(row => {
+    rows.forEach((row, i) => {
         let isEditable = row.id === editableRowId;
         let editableExist = editableRowId !== -1;
         const inputsClasses = 
         "w-full bg-transparent flex justify-center items-center focus:outline-none font-medium text-xs md:text-sm lg:text-base h-full outline-none text-center py-3 duration-200 " 
         +(isEditable ? "bg-green-200 focus:border-blue-500 border-b border-transparent" : "") ;
         myNodeList.push(
-            <form onSubmit={handleFormSubmit} 
+            <form key={i} onSubmit={handleFormSubmit} 
             className={"grid mygrid-8 text-center"
             + ( (isEditable) ? "bg-amber-50 shadow-sm shadow-slate-300 dark:bg-amber-950 dark:shadow-amber-500" 
             : " hover:bg-myColor1 hover:shadow-sm hover:shadow-slate-300 dark:hover:bg-blue-900 dark:hover:shadow-slate-400 "
             + (editableExist && !isEditable ? " pointer-events-none" : ""))}>
-                <div className={'flex items-center'}>
+                <div key={0} className={'flex items-center'}>
                     <img className='w-8 h-10 mr-2' alt='imprimante.png'  src='../imgs/imprimante-1.png' />
                     <input 
                         readOnly={!isEditable}  
@@ -98,12 +98,13 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
                             setMyFormData({...myFormData, modele: e.target.value});
                         }}
                         type='text' 
-                        placeholder="Modele" 
+                        placeholder="Modele"
+                        name='modele'
                         className={inputsClasses} 
                         value={isEditable ? myFormData.modele : row.modele}
                     />
                 </div>
-                <div>
+                <div key={1}>
                     <input 
                         readOnly={!isEditable} 
                         onChange={(e) => {
@@ -111,57 +112,61 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
                         }} 
                         type='text'
                         placeholder="Marque" 
+                        name='marque'
                         className={inputsClasses} 
                         value={isEditable ? myFormData.marque : row.marque}
                     />
                 </div>
-                <div>
+                <div key={2}>
                     <input
                         readOnly={!isEditable}
                         onChange={(e) => {
                             setMyFormData({...myFormData, ip: e.target.value});
                         }} 
                         type='text' 
+                        name='ip'
                         placeholder="Adresse Ip" 
                         className={inputsClasses} 
                         value={isEditable ? myFormData.ip : row.ip}
                     />
                 </div>
-                <div>
+                <div key={3}>
                     <select 
+                        name='departement'
                         disabled={!isEditable}  
                         onChange={(e) => {
                             setMyFormData({...myFormData, departement: e.target.value});
                         }} 
                         className={inputsClasses + " cursor-pointer "}>
-                            <option className='dark:bg-slate-800' value={row['departement_id']}>{row['departement_titre']}</option>
-                            {departements.map(dep => {
+                            <option key={0} className='dark:bg-slate-800' value={row['departement_id']}>{row['departement_titre']}</option>
+                            {departements.map((dep, i) => {
                                 if (dep.id !== row['departement_id'])
-                                    return <option className='dark:bg-slate-800' value={dep.id}> {dep.titre} </option>
+                                    return <option key={i + 1} className='dark:bg-slate-800' value={dep.id}> {dep.titre} </option>
                                 return null
                             })}
                     </select>
                 </div>
-                <div>
+                <div key={4}>
                     <input
                         readOnly={!isEditable}
                         onChange={(e) => {
                             setMyFormData({...myFormData, quantite: e.target.value});
-                        }} 
+                        }}
+                        name='quantite'
                         type='number' 
                         placeholder="Quantite" 
                         className={inputsClasses} 
                         value={isEditable ? myFormData.quantite : row.stock}
                     />
                 </div>
-                <div>
+                <div key={5}>
                     <p className={inputsClasses}> 
                         {row.status === 0 ? "libre" : ''}
                         {row.status === row.stock ? "occupee" : ''}
                         {(row.status !== 0 && row.status !== row.stock) ? (row.stock - row.status) + ' / ' + row.stock + ' libre' : '' }
                     </p>
                 </div>
-                <div>
+                <div key={6}>
                     {row['status'] === 0 ? (
                         <button onClick={e => {e.preventDefault(); onClickAddUserBtn()}} className={inputsClasses + " border-none text-sm font-medium dark:text-white text-blue-900 underline"} /*value={row['utilisateur_id']}*/ >Ajouter Utilisateur</button>
 

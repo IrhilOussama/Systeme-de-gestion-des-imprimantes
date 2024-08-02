@@ -19,8 +19,8 @@ export default function AddImprimante({onAdd, showAddBar}){
             console.error('Error fetching rows:', error);
         });
     }, []); // Empty dependency array ensures useEffect runs only once on mount
-    let myDepartements = departements.map(dep => (
-        <option value={dep['id']}> {dep["titre"]} </option>
+    let myDepartements = departements.map((dep, i) => (
+        <option key={i+1} value={dep['id']}> {dep["titre"]} </option>
     ))
 
     return (

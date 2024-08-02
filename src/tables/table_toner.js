@@ -60,14 +60,14 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
     }, [refreshData])
 
     const myNodeList = [];
-    rows.forEach(row => {
+    rows.forEach((row, i) => {
         let isEditable = row.id === editableRowId;
         let editableExist = editableRowId !== -1;
         const inputsClasses = 
         "w-full bg-transparent flex justify-center items-center focus:outline-none font-medium text-xs md:text-sm lg:text-base h-full outline-none text-center py-3 duration-200 " 
         +(isEditable ? "bg-green-200 focus:border-blue-500 border-b border-transparent" : "") ;
         myNodeList.push(
-            <form onSubmit={handleFormSubmit} 
+            <form key={i} onSubmit={handleFormSubmit} 
             className={"grid mygrid-5 text-center "
             + ( (isEditable) ? "bg-amber-50 shadow-sm shadow-slate-300" 
             : " hover:bg-myColor1 hover:shadow-sm hover:shadow-slate-300"
@@ -79,6 +79,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
                         onChange={(e) => {
                             setMyFormData({...myFormData, modele: e.target.value});
                         }}
+                        name='modele'
                         type='text' 
                         placeholder="Modele" 
                         className={inputsClasses} 
@@ -93,6 +94,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
                         }} 
                         type='text'
                         placeholder="Marque" 
+                        name='marque'
                         className={inputsClasses} 
                         value={isEditable ? myFormData.marque : row.marque}
                     />
@@ -105,21 +107,23 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
                         }} 
                         type='text' 
                         placeholder="Couleur" 
+                        name='couleur'
                         className={inputsClasses} 
                         value={isEditable ? myFormData.couleur : row.couleur}
                     />
                 </div>
                 <div>
                     <select 
+                        name='compatibilite'
                         disabled={!isEditable}  
                         onChange={(e) => {
                             setMyFormData({...myFormData, compatibilite: e.target.value});
                         }} 
                         className={inputsClasses + " cursor-pointer"}>
-                            <option value={row['compatibilite']}>{row['imprimante_titre']}</option>
-                            {imprimantes.map(imp => {
+                            <option key={0} value={row['compatibilite']}>{row['imprimante_titre']}</option>
+                            {imprimantes.map((imp, i) => {
                                 if (imp.id !== row['compatibilite'])
-                                    return <option value={imp.id}> {imp.modele} </option>
+                                    return <option key={i} value={imp.id}> {imp.modele} </option>
                                 return null
                             })}
                     </select>
