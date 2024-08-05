@@ -1,6 +1,6 @@
 import fetchData from "../fetch";
 
-export default function Form({onAdd, controller, action, myFormData, setMyFormData, showAddBar, myDepartements, myUtilisateurs, myImprimantes, inputs}){
+export default function Form({onAdd, controller, action, myFormData, setMyFormData, showAddBar, myDepartements, myUtilisateurs, myImprimantes, niveauList, inputs}){
     const inputList = {
         modele: {
             type: "text",
@@ -118,6 +118,16 @@ export default function Form({onAdd, controller, action, myFormData, setMyFormDa
                 <select name='compatibilite' onChange={e => setMyFormData({...myFormData, compatibilite: e.target.value})} className='border-l border-white w-full py-5 text-center h-full'>
                     <option>Imprimante</option>
                     {myImprimantes}
+                </select>
+            </div>
+            )
+        }
+        else if (key === 'niveau'){
+            return (
+            <div key={index} className='grow'>
+                <select name='niveau' onChange={e => setMyFormData({...myFormData, niveau: e.target.value})} className='border-l border-white w-full py-5 text-center h-full'>
+                    <option>Niveau</option>
+                    {niveauList}
                 </select>
             </div>
             )

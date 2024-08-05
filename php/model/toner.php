@@ -7,6 +7,7 @@ class Toner extends Model{
     private $marque;
     private $couleur;
     private $compatibilite;
+    private $niveau;
 
     public function setModele($modele){
         $this->modele = $modele;
@@ -20,9 +21,12 @@ class Toner extends Model{
     public function setCompatibilite($compatibilite){
         $this->compatibilite = $compatibilite;
     }
+    public function setNiveau($niveau){
+        $this->niveau = $niveau;
+    }
 
     public function getToners(){
-        $stmt = static::dataBase()->query("SELECT id, modele, marque, couleur, compatibilite, 
+        $stmt = static::dataBase()->query("SELECT id, modele, marque, couleur, compatibilite, niveau,
         (SELECT modele 
         FROM imprimantes 
         WHERE imprimantes.id = compatibilite) as imprimante_titre 
@@ -35,7 +39,8 @@ class Toner extends Model{
         SET modele = :modele,
         marque = :marque,
         couleur = :couleur,
-        compatibilite = :compatibilite
+        compatibilite = :compatibilite,
+        niveau = :niveau
         WHERE id = :id
         ");
         $stmt->execute([
@@ -43,18 +48,20 @@ class Toner extends Model{
             ':marque' => $this->marque,
             ':couleur' => $this->couleur,
             ':compatibilite' => $this->compatibilite,
+            ':niveau' => $this->niveau,
             ':id' => $id
         ]);
         return true;
     }
     public function create(){
-        $stmt = static::dataBase()->prepare(" INSERT INTO toners(modele, marque, couleur, compatibilite)
-                                                VALUES (:modele, :marque, :couleur, :compatibilite)");
+        $stmt = static::dataBase()->prepare(" INSERT INTO toners(modele, marque, couleur, compatibilite, niveau)
+                                                VALUES (:modele, :marque, :couleur, :compatibilite, :niveau)");
         $stmt->execute([
             ':modele' => $this->modele,
             ':marque' => $this->marque,
             ':couleur' => $this->couleur,
-            ':compatibilite' => $this->compatibilite
+            ':compatibilite' => $this->compatibilite,
+            ':niveau' => $this->niveau
         ]);
         return true;
     }

@@ -4,7 +4,7 @@ import Form from "../components/form";
 
 export default function AddToner({onAdd, showAddBar, refreshData}){
     // myData
-    const [myFormData, setMyFormData] = useState({modele: "", marque: "", couleur: "", compatibilite: ''});
+    const [myFormData, setMyFormData] = useState({modele: "", marque: "", couleur: "", compatibilite: '', niveau: ''});
 
     const [myImprimantes, setMyImprimantes] = useState([]);
     
@@ -23,6 +23,10 @@ export default function AddToner({onAdd, showAddBar, refreshData}){
         <option key={i+1} value={u['id']}> {u["modele"]} </option>
     ))
 
+    const niveauList = ['epuisee', 'bas', 'moyen', 'normal'].map((n, i) => {
+        return <option key={i} value={i}>{n}</option>
+    })
+
     return (
         <Form 
             onAdd={onAdd}
@@ -30,7 +34,8 @@ export default function AddToner({onAdd, showAddBar, refreshData}){
             setMyFormData={setMyFormData}
             showAddBar={showAddBar}
             myImprimantes={nodelist}
-            inputs={['modele', 'marque', 'couleur', 'compatibilite']}            
+            niveauList={niveauList}
+            inputs={['modele', 'marque', 'couleur', 'compatibilite', 'niveau']}            
             controller={'toner'}
             action={'create'}
         />
