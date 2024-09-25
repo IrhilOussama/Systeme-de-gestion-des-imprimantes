@@ -4,17 +4,18 @@ import AddDepartement from "./add_departement";
 import AddUtilisateur from "./add_utilisateur";
 import AddToner from "./add_toner";
 
-export default function Add({titre, onAdd, showAddBar, refreshData}){
+export default function Add({titre, showAddBar}){
+    titre = titre.toLowerCase();
     if (titre === "imprimante")
-        return <AddImprimante onAdd={onAdd} showAddBar={showAddBar} />
+        return <AddImprimante showAddBar={showAddBar} />
     else if (titre === "departement"){
-        return <AddDepartement onAdd={onAdd} showAddBar={showAddBar} />
+        return <AddDepartement showAddBar={showAddBar} />
     }
     else if (titre === "utilisateur"){
-        return <AddUtilisateur onAdd={onAdd} showAddBar={showAddBar} refreshData={refreshData} />
+        return <AddUtilisateur showAddBar={showAddBar} />
     }
     else if (titre === "toner"){
-        return <AddToner onAdd={onAdd} showAddBar={showAddBar} refreshData={refreshData} />
+        return <AddToner showAddBar={showAddBar} />
     }
     
 }

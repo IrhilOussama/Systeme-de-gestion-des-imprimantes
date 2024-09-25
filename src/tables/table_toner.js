@@ -1,9 +1,11 @@
-import React, { useState, useEffect} from 'react'; 
+import React, { useState, useEffect, useContext} from 'react'; 
 import FetchUrl from '../fetch.js';
 import {Head, ModificationButtons} from './table_components.js';
 import fetchData from '../fetch.js';
+import { AppContext } from '../App.js';
 
-function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
+function Rows(){
+    const {refreshData, triggerRefresh} = useContext(AppContext);
     const [rows, setRows] = useState([]);
     const [imprimantes, setImprimantes] = useState([]);
     const [myFormData, setMyFormData] = useState({
@@ -12,7 +14,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
         marque: "",
         couleur: "",
         compatibilite: "",
-        niveau: ""
+        stock: ""
     })
     const [editableRowId, setEditableRowId] = useState(-1);
 
@@ -25,7 +27,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
                 marque: editableRow.marque,
                 couleur: editableRow.couleur,
                 compatibilite: editableRow.compatibilite,
-                niveau: editableRow.niveau
+                stock: editableRow.stock
             })
     }, [rows, editableRowId])
     
@@ -70,9 +72,9 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
         +(isEditable ? "bg-green-200 focus:border-blue-500 border-b border-transparent" : "") ;
         myNodeList.push(
             <form key={i} onSubmit={handleFormSubmit} 
-            className={"grid mygrid-6 text-center "
-            + ( (isEditable) ? "bg-amber-50 shadow-sm shadow-slate-300" 
-            : " hover:bg-myColor1 hover:shadow-sm hover:shadow-slate-300"
+            className={"grid mygrid-6 text-center dark:text-white dark:bg-amber-950 dark:shadow-amber-500 "
+            + ( (isEditable) ? "bg-amber-50 shadow-sm shadow-slate-300 dark:bg-amber-950 dark:shadow-amber-500 " 
+            : " hover:bg-myColor1 hover:shadow-sm hover:shadow-slate-300 dark:hover:bg-blue-900 dark:hover:shadow-slate-400 "
             + (editableExist && !isEditable ? " pointer-events-none" : ""))}>
                 <div className='flex items-center'>
                     <img className='w-8 h-10 mr-2' alt='imprimante.png'  src='../imgs/imprimante-1.png' />
@@ -131,20 +133,17 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
                     </select>
                 </div>
                 <div>
-                    <select 
-                        name='niveau'
-                        disabled={!isEditable}  
+                    <input
+                        readOnly={!isEditable}
                         onChange={(e) => {
-                            setMyFormData({...myFormData, niveau: e.target.value});
+                            setMyFormData({...myFormData, stock: e.target.value});
                         }} 
-                        className={inputsClasses + " cursor-pointer"}>
-                            <option key={0} value={row['niveau']}>{niveauList[row['niveau']]}</option>
-                            {niveauList.map((n, i) => {
-                                if (i !== row['niveau'])
-                                    return <option key={i} value={i}> {n} </option>
-                                return null
-                            })}
-                    </select>
+                        type='number' 
+                        placeholder="Stock" 
+                        name='stock'
+                        className={inputsClasses} 
+                        value={isEditable ? myFormData.stock : row.stock}
+                    />
                 </div>
                 
 
@@ -170,8 +169,8 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
 
 
 
-export default function TableToner({refreshData, triggerRefresh, onClickAddUserBtn}){
-    const toner_columns = ["modele", "marque", "couleur", "compatibilite", "niveau", "action"];
+export default function TableToner({onClickAddUserBtn}){
+    const toner_columns = ["modele", "marque", "couleur", "compatibilite", "stock", "action"];
 
     return(
         <div className="absolute w-10/12 right-0 mt-24 p-6">
@@ -179,9 +178,7 @@ export default function TableToner({refreshData, triggerRefresh, onClickAddUserB
             <Rows 
             onClickAddUserBtn={onClickAddUserBtn}
              key={1} 
-             toner_columns={toner_columns} 
-             refreshData={refreshData} 
-             triggerRefresh={triggerRefresh} />
+             toner_columns={toner_columns}/>
         </div>
     )
 }

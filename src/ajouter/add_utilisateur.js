@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Form from "../components/form";
 import FetchUrl from "../fetch";
+import { AppContext } from "../App";
 
-export default function AddUtilisateur({onAdd, showAddBar, refreshData}){
+export default function AddUtilisateur({showAddBar}){
     const [myFormData, setMyFormData] = useState({nom: "", imprimante_id: "", departement_id: ""});
+    const {refreshData} = useContext(AppContext);
 
     const [myImprimantes, setMyImprimantes] = useState([]);
     const [myDeps, setMyDeps] = useState([]);
@@ -37,7 +39,6 @@ export default function AddUtilisateur({onAdd, showAddBar, refreshData}){
 
     return (
         <Form 
-            onAdd={onAdd}
             myFormData={myFormData}
             myImprimantes={impNodeList}
             myDepartements={depNodeList}

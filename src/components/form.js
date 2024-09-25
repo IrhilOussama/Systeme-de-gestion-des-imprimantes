@@ -1,6 +1,9 @@
+import { useContext } from "react";
 import fetchData from "../fetch";
+import { AppContext } from "../App";
 
-export default function Form({onAdd, controller, action, myFormData, setMyFormData, showAddBar, myDepartements, myUtilisateurs, myImprimantes, niveauList, inputs}){
+export default function Form({controller, action, myFormData, setMyFormData, showAddBar, myDepartements, myUtilisateurs, myImprimantes, inputs}){
+    const {refreshData, triggerRefresh} = useContext(AppContext);
     const inputList = {
         modele: {
             type: "text",
@@ -17,6 +20,11 @@ export default function Form({onAdd, controller, action, myFormData, setMyFormDa
             title: "Enter a valid IP address (e.g., 192.168.1.1)" 
         },
         quantite: {
+            type: "number",
+            placeholder: "quantite",
+            step: 1
+        },
+        stock: {
             type: "number",
             placeholder: "quantite",
             step: 1
@@ -49,7 +57,7 @@ export default function Form({onAdd, controller, action, myFormData, setMyFormDa
         } catch (error) {
             console.error('Error:', error);
         }
-        onAdd(); // trigger refresh variable so the rows gets updated
+        triggerRefresh()
     }
     // Map input keys to input elements
     const nodeList = inputs.map((key, index) => {
@@ -118,16 +126,6 @@ export default function Form({onAdd, controller, action, myFormData, setMyFormDa
                 <select name='compatibilite' onChange={e => setMyFormData({...myFormData, compatibilite: e.target.value})} className='border-l border-white w-full py-5 text-center h-full'>
                     <option>Imprimante</option>
                     {myImprimantes}
-                </select>
-            </div>
-            )
-        }
-        else if (key === 'niveau'){
-            return (
-            <div key={index} className='grow'>
-                <select name='niveau' onChange={e => setMyFormData({...myFormData, niveau: e.target.value})} className='border-l border-white w-full py-5 text-center h-full'>
-                    <option>Niveau</option>
-                    {niveauList}
                 </select>
             </div>
             )

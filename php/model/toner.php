@@ -7,7 +7,7 @@ class Toner extends Model{
     private $marque;
     private $couleur;
     private $compatibilite;
-    private $niveau;
+    private $stock;
 
     public function setModele($modele){
         $this->modele = $modele;
@@ -21,12 +21,12 @@ class Toner extends Model{
     public function setCompatibilite($compatibilite){
         $this->compatibilite = $compatibilite;
     }
-    public function setNiveau($niveau){
-        $this->niveau = $niveau;
+    public function setStock($stock){
+        $this->stock = $stock;
     }
 
     public function getToners(){
-        $stmt = static::dataBase()->query("SELECT id, modele, marque, couleur, compatibilite, niveau,
+        $stmt = static::dataBase()->query("SELECT id, modele, marque, couleur, compatibilite, stock,
         (SELECT modele 
         FROM imprimantes 
         WHERE imprimantes.id = compatibilite) as imprimante_titre 
@@ -40,7 +40,7 @@ class Toner extends Model{
         marque = :marque,
         couleur = :couleur,
         compatibilite = :compatibilite,
-        niveau = :niveau
+        stock = :stock
         WHERE id = :id
         ");
         $stmt->execute([
@@ -48,20 +48,20 @@ class Toner extends Model{
             ':marque' => $this->marque,
             ':couleur' => $this->couleur,
             ':compatibilite' => $this->compatibilite,
-            ':niveau' => $this->niveau,
+            ':stock' => $this->stock,
             ':id' => $id
         ]);
         return true;
     }
     public function create(){
-        $stmt = static::dataBase()->prepare(" INSERT INTO toners(modele, marque, couleur, compatibilite, niveau)
-                                                VALUES (:modele, :marque, :couleur, :compatibilite, :niveau)");
+        $stmt = static::dataBase()->prepare(" INSERT INTO toners(modele, marque, couleur, compatibilite, stock)
+                                                VALUES (:modele, :marque, :couleur, :compatibilite, :stock)");
         $stmt->execute([
             ':modele' => $this->modele,
             ':marque' => $this->marque,
             ':couleur' => $this->couleur,
             ':compatibilite' => $this->compatibilite,
-            ':niveau' => $this->niveau
+            ':stock' => $this->stock
         ]);
         return true;
     }

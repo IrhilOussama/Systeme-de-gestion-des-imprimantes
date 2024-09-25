@@ -1,9 +1,13 @@
-import React, { useState, useEffect} from 'react'; 
+import React, { useState, useEffect, useContext} from 'react'; 
 import FetchUrl from '../fetch.js';
 import {Head, ModificationButtons} from './table_components';
 import fetchData from '../fetch.js';
+import { AppContext } from '../App.js';
+import fetchData2 from '../fetchForTesting.js';
+import { Link } from 'react-router-dom';
 
-function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
+function Rows({onClickAddUserBtn, filter}){
+    const {refreshData, triggerRefresh} = useContext(AppContext);
     const [backUpRows, setBackUpRows] = useState([]);
     const [rows, setRows] = useState([]);
     
@@ -61,6 +65,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
     }
 
     
+    // fetchData2("imprimante", 'get_imprimantes')
     useEffect(() => {
         FetchUrl("imprimante", 'get_imprimantes')
         .then(res => {
@@ -87,7 +92,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
         myNodeList.push(
             <form key={i} onSubmit={handleFormSubmit} 
             className={"grid mygrid-8 text-center"
-            + ( (isEditable) ? "bg-amber-50 shadow-sm shadow-slate-300 dark:bg-amber-950 dark:shadow-amber-500" 
+            + ( (isEditable) ? " bg-amber-50 shadow-sm shadow-slate-300 dark:bg-amber-950 dark:shadow-amber-500" 
             : " hover:bg-myColor1 hover:shadow-sm hover:shadow-slate-300 dark:hover:bg-blue-900 dark:hover:shadow-slate-400 "
             + (editableExist && !isEditable ? " pointer-events-none" : ""))}>
                 <div key={0} className={'flex items-center'}>
@@ -168,7 +173,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
                 </div>
                 <div key={6}>
                     {row['status'] === 0 ? (
-                        <button onClick={e => {e.preventDefault(); onClickAddUserBtn()}} className={inputsClasses + " border-none text-sm font-medium dark:text-white text-blue-900 underline"} /*value={row['utilisateur_id']}*/ >Ajouter Utilisateur</button>
+                        <Link to={"/utilisateurs"} className={inputsClasses + " border-none text-sm font-medium dark:text-white text-blue-900 underline"} /*value={row['utilisateur_id']}*/ >Ajouter Utilisateur</Link>
 
                     ) : (
                         <button onClick={e => {e.preventDefault()}} className={inputsClasses + " border-none"} /*value={row['utilisateur_id']}*/ >
@@ -199,7 +204,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData, filter}){
 
 
 
-export default function TableImprimante({refreshData, triggerRefresh, onClickAddUserBtn, filter}){
+export default function TableImprimante({onClickAddUserBtn, filter}){
     const imprimante_columns = ["modele", "marque", "adresse_ip", "departement", "stock", "status", "utilisateur", "action"];
 
     return(
@@ -209,9 +214,7 @@ export default function TableImprimante({refreshData, triggerRefresh, onClickAdd
             filter={filter}
             onClickAddUserBtn={onClickAddUserBtn}
              key={1} 
-             imprimante_columns={imprimante_columns} 
-             refreshData={refreshData} 
-             triggerRefresh={triggerRefresh} />
+             imprimante_columns={imprimante_columns}/>
         </div>
     )
 }

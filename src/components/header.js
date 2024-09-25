@@ -51,10 +51,10 @@ export default function Header({titre, onClick, filterOn}){
     const [filterBtnClicked, setFilterBtnClicked] = useState(false);
     const [mode, setMode] = useState(localStorage['mode']);
     async function handleDocumentBtnClick(){
-        await fetch('http://localhost/gestion-imprimantes-react/functions/excel/generate_excel.php');
+        await fetch('http://localhost/gestion-imprimantes-react/php/excel/generate_excel.php');
         const a = document.createElement("A");
-        a.href = 'http://localhost/gestion-imprimantes-react/functions/excel/imprimantes_data.xlsx';
-        a.download = 'imprimanes_data';
+        a.href = 'http://localhost/gestion-imprimantes-react/php/excel/imprimantes_data.xlsx';
+        a.download = 'imprimantes_data';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -83,18 +83,19 @@ export default function Header({titre, onClick, filterOn}){
                         }>
                         <img className="dark:bg-white rounded-md p-1" src="../icons/moon.svg" alt="dark mode" />
                     </button>
-
-                    <div key={2} className="flex items-center">
-                        <button onClick={() => setFilterBtnClicked(!filterBtnClicked)} className="ml-3">
-                            <img className="w-8 dark:bg-white rounded-md p-1" src="../icons/filter.svg" alt="filter" />
-                        </button>
-                        <List filterBtnClicked={filterBtnClicked} filterOn={filterOn} hideList={() => {setFilterBtnClicked(false)}} />
-                    </div>
-                    {titre !== 'statistique' ? (
+                    {titre === "Imprimante" ? ( 
+                        <div key={2} className="flex items-center">
+                            <button onClick={() => setFilterBtnClicked(!filterBtnClicked)} className="ml-3">
+                                <img className="w-8 dark:bg-white rounded-md p-1" src="../icons/filter.svg" alt="filter" />
+                            </button>
+                            <List filterBtnClicked={filterBtnClicked} filterOn={filterOn} hideList={() => {setFilterBtnClicked(false)}} />
+                        </div>
+                    ) : null
+                    }
+                    {titre !== 'Statistique' ? (
                     <button key={3} onClick={onClick} className="bg-blue-500 text-white p-2 rounded ml-8">
                         Ajouter {titre}
                     </button>
-
                     ): null}
                 </div>
             </div>

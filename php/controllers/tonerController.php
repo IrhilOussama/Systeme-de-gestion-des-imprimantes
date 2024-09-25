@@ -6,18 +6,18 @@ function handleTonerAction($action){
             return $toner->getToners();
             break;
         case 'create':
-            if (isset($_POST['modele']) && isset($_POST['marque']) && isset($_POST['couleur']) && isset($_POST['compatibilite']) && isset($_POST['niveau'])){
+            if (isset($_POST['modele']) && isset($_POST['marque']) && isset($_POST['couleur']) && isset($_POST['compatibilite']) && isset($_POST['stock'])){
                 $modele = $_POST['modele'];
                 $marque = $_POST['marque'];
                 $couleur = $_POST['couleur'];
                 $compatibilite = $_POST['compatibilite'];
-                $niveau = $_POST['niveau'];
-                if (!empty($modele) && !empty($marque) && !empty($couleur) && !empty($compatibilite) && !empty($niveau)){
+                $stock = $_POST['stock'];
+                if (!empty($modele) && !empty($marque) && !empty($couleur) && !empty($compatibilite) && !empty($stock)){
                     $toner->setModele($modele);
                     $toner->setMarque($marque);
                     $toner->setCouleur($couleur);
                     $toner->setCompatibilite($compatibilite);
-                    $toner->setNiveau($niveau);
+                    $toner->setStock($stock);
                     $toner->create();
                     return ['created' => true];
                 }
@@ -25,19 +25,19 @@ function handleTonerAction($action){
             return ['created' => false];
             break;
         case 'update':
-            if (isset($_POST['id']) && isset($_POST['modele']) && isset($_POST['marque']) && isset($_POST['couleur']) && isset($_POST['compatibilite']) && isset($_POST['niveau'])){
+            if (isset($_POST['id']) && isset($_POST['modele']) && isset($_POST['marque']) && isset($_POST['couleur']) && isset($_POST['compatibilite']) && isset($_POST['stock'])){
                 $id = $_POST['id'];
                 $modele = $_POST['modele'];
                 $marque = $_POST['marque'];
                 $couleur = $_POST['couleur'];
                 $compatibilite = $_POST['compatibilite'];
-                $niveau = $_POST['niveau'];
+                $stock = $_POST['stock'];
                 if (!empty($id) && !empty($modele) && !empty($marque) && !empty($couleur) && !empty($compatibilite)){
                     $toner->setModele($modele);
                     $toner->setMarque($marque);
                     $toner->setCouleur($couleur);
                     $toner->setCompatibilite($compatibilite);
-                    $toner->setNiveau($niveau);
+                    $toner->setStock($stock);
                     $toner->update($id);
                     return ['updated' => true];
                 }

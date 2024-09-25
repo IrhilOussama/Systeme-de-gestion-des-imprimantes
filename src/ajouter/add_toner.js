@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import FetchUrl from "../fetch";
 import Form from "../components/form";
+import { AppContext } from "../App";
 
-export default function AddToner({onAdd, showAddBar, refreshData}){
+export default function AddToner({showAddBar}){
     // myData
-    const [myFormData, setMyFormData] = useState({modele: "", marque: "", couleur: "", compatibilite: '', niveau: ''});
-
+    const [myFormData, setMyFormData] = useState({modele: "", marque: "", couleur: "", compatibilite: '', stock: ''});
+    const {refreshData} = useContext(AppContext);
     const [myImprimantes, setMyImprimantes] = useState([]);
     
     useEffect(() => {
@@ -23,19 +24,13 @@ export default function AddToner({onAdd, showAddBar, refreshData}){
         <option key={i+1} value={u['id']}> {u["modele"]} </option>
     ))
 
-    const niveauList = ['epuisee', 'bas', 'moyen', 'normal'].map((n, i) => {
-        return <option key={i} value={i}>{n}</option>
-    })
-
     return (
         <Form 
-            onAdd={onAdd}
             myFormData={myFormData}
             setMyFormData={setMyFormData}
             showAddBar={showAddBar}
             myImprimantes={nodelist}
-            niveauList={niveauList}
-            inputs={['modele', 'marque', 'couleur', 'compatibilite', 'niveau']}            
+            inputs={['modele', 'marque', 'couleur', 'compatibilite', 'stock']}            
             controller={'toner'}
             action={'create'}
         />

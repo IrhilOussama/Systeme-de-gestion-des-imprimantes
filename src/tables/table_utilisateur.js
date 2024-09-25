@@ -1,13 +1,15 @@
-import React, { useState, useEffect} from 'react'; 
+import React, { useState, useEffect, useContext} from 'react'; 
 import FetchUrl from '../fetch.js';
 import {Head, ModificationButtons} from './table_components';
 import fetchData from '../fetch.js';
+import { AppContext } from '../App.js';
 
 
 
 
 
-function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
+function Rows(){
+    const {refreshData, triggerRefresh} = useContext(AppContext);
     const [rows, setRows] = useState([]);
     const [imprimantes, setImprimantes] = useState([]);
     const [departements, setDepartements] = useState([]);
@@ -76,12 +78,12 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
         let editableExist = editableRowId !== -1;
         const inputsClasses = 
         "w-full bg-transparent flex justify-center items-center focus:outline-none font-medium text-xs md:text-sm lg:text-base h-full outline-none text-center py-3 duration-200 " 
-        +(isEditable ? "bg-green-200 focus:border-blue-500 border-b border-transparent" : "") ;
+        +(isEditable ? "bg-green-200 focus:border-blue-500 border-b border-transparent dark:bg-amber-950 dark:shadow-amber-500 " : "") ;
         myNodeList.push(
             <form key={i} onSubmit={handleFormSubmit} 
-            className={"grid mygrid-4 text-center "
-            + ( (isEditable) ? "bg-amber-50 shadow-sm shadow-slate-300" 
-            : " hover:bg-myColor1 hover:shadow-sm hover:shadow-slate-300"
+            className={"grid mygrid-4 text-center dark:text-white "
+            + ( (isEditable) ? "bg-amber-50 shadow-sm shadow-slate-300 dark:bg-amber-950 dark:shadow-amber-500 " 
+            : " hover:bg-myColor1 hover:shadow-sm hover:shadow-slate-300 dark:hover:bg-blue-900 dark:hover:shadow-slate-400 "
             + (editableExist && !isEditable ? " pointer-events-none" : ""))}>
                 <div>
                     <input 
@@ -150,7 +152,7 @@ function Rows({onClickAddUserBtn, triggerRefresh, refreshData}){
 
 
 
-export default function TableUtilisateur({refreshData, triggerRefresh, onClickAddUserBtn}){
+export default function TableUtilisateur({onClickAddUserBtn}){
     const departement_columns = ["nom et prenom", "departement", "imprimante associee", "action"];
 
     return(
@@ -159,9 +161,7 @@ export default function TableUtilisateur({refreshData, triggerRefresh, onClickAd
             <Rows 
             onClickAddUserBtn={onClickAddUserBtn}
             key={1} 
-            imprimante_columns={departement_columns} 
-            refreshData={refreshData} 
-            triggerRefresh={triggerRefresh} />
+            imprimante_columns={departement_columns} />
         </div>
     )
 }

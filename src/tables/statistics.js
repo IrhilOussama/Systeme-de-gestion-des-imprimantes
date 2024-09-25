@@ -1,13 +1,30 @@
 import {Chart as ChartJs} from 'chart.js/auto'
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import FetchUrl from '../fetch';
 import {Doughnut, Bar} from 'react-chartjs-2'
 
 export default function Statistics(){
-  const [imprimantesFonctionneNumber, setImprimantesFonctionneNumber] = useState();
-  const [imprimantesEnPanneNumber, setImprimantesEnPanneNumber] = useState();
-  const [imprimantesOccupeeNumber, setimprImantesOccupeeNumber] = useState();
-  const [imprimantesDisponiblesNumber, setImprimantesDisponiblesNumber] = useState();
+  function myReducer(myState, myAction){
+    switch(myAction.type){
+      case "imp_fonc":
+        return {...myState, imprimantesFonctionneNumber: myAction.payload}
+      case "imp_Nfonc":
+        return {...myState, imprimantesEnPanneNumber: myAction.payload}
+      case "imp_disp":
+        return {...myState, imprimantesDisponiblesNumber: myAction.payload}
+      case "imp_Ndisp":
+        return {...myState, imprimantesOccupeeNumber: myAction.payload}
+      default:
+        break;
+    }
+  }
+  const [imprimantesInfo, Imprimante] = useReducer(myReducer, {
+    imprimantesFonctionneNumber: 0,
+    imprimantesEnPanneNumber: 0,
+    imprimantesOccupeeNumber: 0,
+    imprimantesDisponiblesNumber: 0
+  });
+  
   const [imprimantesByDepartement, setImprimantesByDepartements] = useState([]);
 
   const departements = Object.keys(imprimantesByDepartement);
@@ -26,24 +43,21 @@ export default function Statistics(){
       return currentImpriantesNumber;
   }
 
-  
-
-
   useEffect(() => {
     const fetchData = async () => {
       const imprimantes = await FetchUrl("imprimante", "get_imprimantes");
 
       const toners = await FetchUrl("toner", "get_toners");
-      setImprimantesFonctionneNumber(toners.length);
-      setImprimantesEnPanneNumber(getImprimantesNumber(imprimantes) - toners.length);
+      
+      Imprimante({type: "imp_fonc", payload: toners.length});
+      Imprimante({type: "imp_Nfonc", payload: getImprimantesNumber(imprimantes) - toners.length});
       
       const utilisateurs = await FetchUrl("utilisateur", "get_utilisateurs");
-      setimprImantesOccupeeNumber(utilisateurs.length);
-      setImprimantesDisponiblesNumber(getImprimantesNumber(imprimantes) - utilisateurs.length);
+      Imprimante({type: "imp_Ndisp", payload: utilisateurs.length});
+      Imprimante({type: "imp_disp", payload: getImprimantesNumber(imprimantes) - utilisateurs.length});
       
       const imprimantesByDep = await FetchUrl('imprimante', "get_imprimantes_groupe");
       setImprimantesByDepartements(imprimantesByDep);
-
     }
     fetchData();
   }, [])
@@ -72,7 +86,7 @@ export default function Statistics(){
               {
                 labels: ["Imprimante qui fonctionne", "Imprimantes en panne"],
                 datasets: [
-                  {label: "Nombre des Imprimantes", data: [imprimantesFonctionneNumber, imprimantesEnPanneNumber] }
+                  {label: "Nombre des Imprimantes", data: [imprimantesInfo.imprimantesFonctionneNumber, imprimantesInfo.imprimantesEnPanneNumber] }
                 ]
               }
             }
@@ -85,7 +99,7 @@ export default function Statistics(){
               {
                 labels: ["Imprimante disponibles", "Imprimantes occupee"],
                 datasets: [
-                  {label: "Nombre des Imprimantes", data: [imprimantesDisponiblesNumber, imprimantesOccupeeNumber] }
+                  {label: "Nombre des Imprimantes", data: [imprimantesInfo.imprimantesDisponiblesNumber, imprimantesInfo.imprimantesOccupeeNumber] }
                 ]
               }
             }

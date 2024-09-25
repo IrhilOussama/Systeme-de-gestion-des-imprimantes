@@ -3,7 +3,7 @@ import { useState } from "react";
 import FetchUrl from "../fetch";
 import Form from "../components/form";
 
-export default function AddImprimante({onAdd, showAddBar}){
+export default function AddImprimante({showAddBar}){
     // myData
     const [myFormData, setMyFormData] = useState({modele: "", marque: "", departement: "", quantite: 1, ip: ""});
 
@@ -24,8 +24,7 @@ export default function AddImprimante({onAdd, showAddBar}){
     ))
 
     return (
-        <Form 
-            onAdd={onAdd}
+        <Form
             myFormData={myFormData}
             setMyFormData={setMyFormData}
             showAddBar={showAddBar}
